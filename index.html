@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b12">
+  <meta name="description" content="TAHA PRIVATE — آزمایشگاه تحلیل عددی شخصی">
+  <title>TAHA PRIVATE — Numeric Lab</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <main id="loginScreen" class="login-shell">
+    <section class="login-card glass">
+      <div class="brand-mark"><span class="brand-symbol">T<span>·</span></span><span class="brand-pulse"></span></div>
+      <div class="eyebrow"><span class="live-dot"></span> PRIVATE ACCESS / SECURE LOCAL MODE</div>
+      <h1>TAHA <span>PRIVATE</span></h1>
+      <p class="login-subtitle">ورود به آزمایشگاه عددی شخصی</p>
+      <form id="loginForm" autocomplete="off">
+        <label for="username">شناسه کاربری</label>
+        <div class="input-wrap"><span class="input-icon">⌘</span><input id="username" name="username" value="taha" spellcheck="false" autocomplete="username" required></div>
+        <label for="password">رمز عبور</label>
+        <div class="input-wrap"><span class="input-icon">⌁</span><input id="password" name="password" type="password" placeholder="رمز اختصاصی را وارد کن" autocomplete="current-password" required><button id="togglePassword" class="reveal" type="button" aria-label="نمایش رمز">◉</button></div>
+        <p id="loginError" class="form-error" role="alert"></p>
+        <button class="primary-button login-button" type="submit"><span>ورود به داشبورد</span><span class="button-arrow">↙</span></button>
+      </form>
+      <div class="login-footer"><span>LOCAL SESSION</span><span>● رمز در سرور ذخیره نمی‌شود</span></div>
+    </section>
+    <div class="login-side-note"><span>01</span><i></i><span>NUMERIC ANALYSIS SYSTEM</span></div>
+  </main>
+
+  <main id="appScreen" class="app-shell hidden">
+    <aside class="sidebar glass">
+      <a class="brand" href="#" aria-label="صفحه اصلی"><span class="brand-symbol small">T<span>·</span></span><span class="brand-name">TAHA <b>PRIVATE</b><small>NUMERIC LAB / 01</small></span></a>
+      <div class="side-label">فضای کاری</div>
+      <button class="nav-item active" data-view="dashboard"><span class="nav-glyph">◈</span> داشبورد <span class="nav-count">01</span></button>
+      <button class="nav-item" data-view="analysis"><span class="nav-glyph">⌘</span> تحلیل ترکیب‌ها</button>
+      <button class="nav-item" data-view="compare"><span class="nav-glyph">⤢</span> مقایسه الگوریتم‌ها</button>
+      <button class="nav-item" data-view="history"><span class="nav-glyph">◷</span> تاریخچه اجرا</button>
+      <div class="sidebar-bottom">
+        <div class="system-card"><div class="system-card-head"><span class="live-dot"></span> وضعیت سیستم <b>فعال</b></div><div class="system-meter"><i></i></div><small>محاسبات روی همین دستگاه انجام می‌شوند.</small></div>
+        <button id="logoutButton" class="logout-button"><span>↪</span> خروج امن</button>
+      </div>
+    </aside>
+
+    <section class="main-area">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>TAHA PRIVATE</span><i>/</i><b id="breadcrumbTitle">داشبورد</b></div>
+        <div class="topbar-right"><span class="clock" id="clock">--:--:--</span><span class="top-status"><i></i> سیستم آماده است</span><div class="avatar">T</div></div>
+      </header>
+
+      <section class="view active-view" id="dashboardView">
+        <div class="hero-row">
+          <div><div class="eyebrow"><span class="live-dot"></span> PERSONAL NUMERIC LAB <span class="eyebrow-line"></span> V1.0.0</div><h2>خوش برگشتی، <span class="gradient-text">طاها.</span></h2><p class="hero-copy">آزمایش‌ها را اجرا کن، الگوریتم‌ها را مقایسه کن و عملکرد را دقیق ببین.</p></div>
+          <div class="hero-chip"><span class="chip-orbit">✳</span><div><b>حالت محلی</b><small>بدون ارسال داده به سرور</small></div></div>
+        </div>
+        <div class="stats-grid">
+          <article class="stat-card glass"><div class="stat-top"><span>کل اجراها</span><span class="stat-icon cyan">◷</span></div><strong id="statRuns">۰</strong><small><i class="tiny-dot"></i> در این نشست</small><div class="stat-line"><i style="width:36%"></i></div></article>
+          <article class="stat-card glass"><div class="stat-top"><span>ترکیب‌های بررسی‌شده</span><span class="stat-icon purple">⌘</span></div><strong id="statChecks">۰</strong><small>محاسبات انجام‌شده</small><div class="stat-line purple-line"><i style="width:54%"></i></div></article>
+          <article class="stat-card glass"><div class="stat-top"><span>آخرین زمان اجرا</span><span class="stat-icon green">ϟ</span></div><strong id="statTime">—</strong><small>میلی‌ثانیه</small><div class="stat-line green-line"><i style="width:72%"></i></div></article>
+          <article class="stat-card glass"><div class="stat-top"><span>وضعیت موتور</span><span class="stat-icon pink">◉</span></div><strong class="status-word">آماده</strong><small><i class="tiny-dot"></i> منتظر دستور تو</small><div class="stat-line pink-line"><i style="width:90%"></i></div></article>
+        </div>
+        <div class="content-grid">
+          <article class="panel glass quick-panel">
+            <div class="panel-heading"><div><span class="section-kicker">QUICK START / 01</span><h3>شروع یک آزمایش</h3></div><span class="panel-symbol">⌁</span></div>
+            <p class="muted">یک هدف پنج‌رقمی انتخاب کن و الگوریتم‌ها را روی مسئله‌ای آموزشی و مستقل اجرا کن.</p>
+            <div class="target-preview" dir="ltr"><span>_</span><span>_</span><span>_</span><span>_</span><span>_</span></div>
+            <button class="primary-button full-button" data-go="analysis">رفتن به آزمایشگاه <span class="button-arrow">↙</span></button>
+          </article>
+          <article class="panel glass activity-panel">
+            <div class="panel-heading"><div><span class="section-kicker">SYSTEM ACTIVITY</span><h3>فعالیت اخیر</h3></div><button class="text-button" data-go="history">مشاهده همه ↗</button></div>
+            <div id="recentActivity" class="activity-list"><div class="empty-state"><span>⌁</span><p>هنوز آزمایشی اجرا نشده.</p><small>اولین اجرای خودت را از آزمایشگاه شروع کن.</small></div></div>
+          </article>
+        </div>
+        <div class="bottom-banner"><div class="banner-icon">✳</div><div><b>آزمایشگاه آماده است</b><p>تمام محاسبات عددی در مرورگر همین دستگاه اجرا می‌شوند.</p></div><span class="banner-code">LOCAL / 256</span></div>
+      </section>
+
+      <section class="view" id="analysisView">
+        <div class="page-heading"><div><div class="eyebrow">NUMERIC ENGINE <span class="eyebrow-line"></span> 02</div><h2>تحلیل <span class="gradient-text">ترکیب‌ها</span></h2><p class="hero-copy">هدف آزمایشی را تعریف کن و روش بررسی را انتخاب کن.</p></div><div class="tag-pill"><i></i> SANDBOX MODE</div></div>
+        <div class="analysis-layout">
+          <article class="panel glass config-panel">
+            <div class="panel-heading"><div><span class="section-kicker">CONFIGURATION</span><h3>تنظیم آزمایش</h3></div><span class="step-badge">01 / 03</span></div>
+            <label class="field-label" for="targetInput">عدد هدف پنج‌رقمی <span>۵ رقم، فقط اعداد ۱ تا ۹</span></label>
+            <div class="digit-inputs" dir="ltr">
+              <input maxlength="1" inputmode="numeric" class="digit" aria-label="رقم اول" data-digit="0">
+              <input maxlength="1" inputmode="numeric" class="digit" aria-label="رقم دوم" data-digit="1">
+              <input maxlength="1" inputmode="numeric" class="digit" aria-label="رقم سوم" data-digit="2">
+              <input maxlength="1" inputmode="numeric" class="digit" aria-label="رقم چهارم" data-digit="3">
+              <input maxlength="1" inputmode="numeric" class="digit" aria-label="رقم پنجم" data-digit="4">
+            </div>
+            <div class="helper-line"><span>ⓘ</span> هدف فقط برای شبیه‌سازی آموزشی محلی استفاده می‌شود.</div>
+            <label class="field-label" for="algorithmSelect">روش تحلیل</label>
+            <div class="select-wrap"><select id="algorithmSelect"><option value="sequential">بررسی ترتیبی</option><option value="recursive">تولید بازگشتی ترکیب‌ها</option></select><span>⌄</span></div>
+            <div class="option-row"><div><b>تکرار رقم‌ها مجاز باشد</b><small>مثال: ۱۲۱۳۴ یک ترکیب معتبر است.</small></div><label class="switch"><input id="allowRepeats" type="checkbox" checked><span></span></label></div>
+            <div class="option-row"><div><b>نمایش روند زنده</b><small>به‌روزرسانی پیشرفت حین اجرا</small></div><label class="switch"><input id="liveProgress" type="checkbox" checked><span></span></label></div>
+            <div class="form-error" id="targetError" role="alert"></div>
+            <button id="runButton" class="primary-button full-button"><span>اجرای آزمایش</span><span class="button-arrow">ϟ</span></button>
+            <button id="stopButton" class="secondary-button full-button hidden">توقف آزمایش</button>
+          </article>
+          <article class="panel glass result-panel">
+            <div class="panel-heading"><div><span class="section-kicker">LIVE TELEMETRY</span><h3>مانیتور اجرا</h3></div><span class="live-pill" id="engineState"><i></i> آماده</span></div>
+            <div class="result-display"><div class="result-ring"><div><span id="progressPercent">۰٪</span><small>پیشرفت</small></div></div><div class="result-main"><span class="section-kicker">MATCHED SEQUENCE</span><div id="resultDigits" class="result-digits" dir="ltr"><span>—</span><span>—</span><span>—</span><span>—</span><span>—</span></div><p id="resultMessage">برای شروع، هدف آزمایشی را وارد کن.</p></div></div>
+            <div class="progress-track"><i id="progressBar"></i></div>
+            <div class="telemetry-grid"><div><small>ترکیب بررسی‌شده</small><b id="checksNow">۰</b></div><div><small>کل فضای جست‌وجو</small><b id="checksTotal">۵۹٬۰۴۹</b></div><div><small>زمان اجرا</small><b id="elapsedNow">۰ ms</b></div><div><small>سرعت فعلی</small><b id="speedNow">— / s</b></div></div>
+            <div class="console-box"><div class="console-head"><span><i></i><i></i><i></i></span><small>ENGINE CONSOLE</small><b>LIVE</b></div><div id="consoleLog" class="console-log"><p><span>›</span> TAHA NUMERIC ENGINE v1.0 ready.</p><p><span>›</span> Waiting for local test parameters...</p></div></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="view" id="compareView">
+        <div class="page-heading"><div><div class="eyebrow">BENCHMARK STUDIO <span class="eyebrow-line"></span> 03</div><h2>مقایسه <span class="gradient-text">الگوریتم‌ها</span></h2><p class="hero-copy">دو روش را روی یک هدف آموزشی یکسان مقایسه کن.</p></div><div class="tag-pill"><i></i> PERFORMANCE TEST</div></div>
+        <div class="panel glass compare-intro"><div class="compare-icon">⤢</div><div><h3>آزمایش معیار عملکرد</h3><p class="muted">مقایسه درون‌مرورگری است و زمان‌ها بسته به دستگاه و مرورگر تغییر می‌کنند.</p></div><button id="compareButton" class="primary-button">اجرای مقایسه <span class="button-arrow">↙</span></button></div>
+        <div class="compare-grid"><article class="panel glass benchmark-card"><div class="benchmark-head"><span class="algo-icon cyan">01</span><div><h3>بررسی ترتیبی</h3><small>SEQUENTIAL SEARCH</small></div></div><div class="benchmark-value" id="seqTime">—<small>ms</small></div><div class="benchmark-track"><i id="seqBar"></i></div><div class="benchmark-meta"><span>تعداد بررسی</span><b id="seqChecks">—</b></div><p class="muted">هر ترکیب را به ترتیب بررسی می‌کند تا به هدف برسد.</p></article>
+          <article class="panel glass benchmark-card"><div class="benchmark-head"><span class="algo-icon purple">02</span><div><h3>تولید بازگشتی</h3><small>RECURSIVE GENERATION</small></div></div><div class="benchmark-value" id="recTime">—<small>ms</small></div><div class="benchmark-track purple-track"><i id="recBar"></i></div><div class="benchmark-meta"><span>تعداد بررسی</span><b id="recChecks">—</b></div><p class="muted">ترکیب‌ها را با فراخوانی بازگشتی تولید و بررسی می‌کند.</p></article></div>
+        <div class="panel glass chart-panel"><div class="panel-heading"><div><span class="section-kicker">RELATIVE PERFORMANCE</span><h3>نمودار مقایسه زمان</h3></div><span class="chart-legend"><i></i> زمان اجرا (ms)</span></div><div class="chart-area"><div class="chart-y"><span>بیشتر</span><span>متوسط</span><span>کمتر</span></div><div class="chart-bars"><div class="chart-column"><div class="bar-shell"><i id="chartSeq"></i></div><span>بررسی ترتیبی</span></div><div class="chart-column"><div class="bar-shell purple-shell"><i id="chartRec"></i></div><span>تولید بازگشتی</span></div></div></div><p class="chart-note">نکته: برای یک مسئله کوچک، سربار اجرای تابع‌ها ممکن است نتیجه را تغییر دهد؛ زمان کمتر همیشه به معنی برتری در همه ورودی‌ها نیست.</p></div>
+      </section>
+
+      <section class="view" id="historyView">
+        <div class="page-heading"><div><div class="eyebrow">SESSION RECORDS <span class="eyebrow-line"></span> 04</div><h2>تاریخچه <span class="gradient-text">اجرا</span></h2><p class="hero-copy">گزارش اجرای فعلی این نشست را مرور کن.</p></div><button id="clearHistory" class="secondary-button">پاک‌کردن تاریخچه</button></div>
+        <div class="panel glass history-panel"><div class="table-head"><span>نوع آزمایش</span><span>هدف</span><span>بررسی‌ها</span><span>زمان</span><span>نتیجه</span></div><div id="historyRows"><div class="empty-state"><span>◷</span><p>تاریخچه‌ای وجود ندارد.</p><small>پس از اجرای اولین آزمایش، گزارش اینجا نمایش داده می‌شود.</small></div></div></div>
+        <div class="privacy-note"><span>◇</span><div><b>حریم خصوصی نشست</b><p>تاریخچه در حافظه همین صفحه نگهداری می‌شود و با بستن یا تازه‌سازی صفحه پاک خواهد شد.</p></div></div>
+      </section>
+
+      <footer class="app-footer"><span>TAHA PRIVATE <b>© 2026</b></span><span>DESIGNED FOR LEARNING <i>✳</i> BUILT TO EXPLORE</span></footer>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="./app.js"></script>
+</body>
+</html>
