@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TAHA SECURITY LAB — Password Guessing Demo</title>
+<style>
+:root{color-scheme:dark;--bg:#090a0b;--panel:#121416;--line:#292e31;--muted:#9aa2a6;--accent:#b7ff68;--red:#ff7676;--blue:#8fd8ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#171e19 0,#090a0b 55%);color:#f4f6f3;font-family:Tahoma,Arial,sans-serif;min-height:100vh}
+header{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:22px max(5%,calc((100% - 1080px)/2));border-bottom:1px solid var(--line);background:#090a0bdd;position:sticky;top:0;backdrop-filter:blur(12px)}
+.logo{font-weight:800;letter-spacing:1px;direction:ltr}.logo b{color:var(--accent)}.pill{font-size:11px;color:var(--accent);border:1px solid #49633c;border-radius:99px;padding:8px 12px}
+main{width:min(1080px,90%);margin:44px auto}.eyebrow{font-size:11px;letter-spacing:2px;color:var(--accent);direction:ltr;text-align:right}h1{font-size:clamp(30px,5vw,46px);margin:14px 0}p{color:var(--muted);line-height:2;font-size:14px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}.card{background:linear-gradient(145deg,#151819,#101112);border:1px solid var(--line);border-radius:18px;padding:24px;min-width:0}.card h2{font-size:17px;margin:0 0 18px}.label{font-size:12px;color:var(--muted);margin:18px 0 8px;display:block}input,select{width:100%;background:#0b0d0e;border:1px solid #353b3e;border-radius:10px;padding:13px;color:#fff;font:inherit;outline:none}input:focus,select:focus{border-color:var(--accent)}.row{display:flex;gap:10px;flex-wrap:wrap}button{border:0;border-radius:10px;background:var(--accent);color:#10150d;font-weight:800;font:inherit;padding:13px 16px;cursor:pointer;margin-top:14px}button.secondary{background:#23292b;color:white;border:1px solid #3a4144}button:disabled{opacity:.45;cursor:not-allowed}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.stat{background:#0b0d0e;border:1px solid var(--line);border-radius:12px;padding:14px}.stat small{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;font-size:21px;margin-top:8px;direction:ltr;text-align:right}.status{padding:13px;background:#0b0d0e;border:1px solid var(--line);border-radius:10px;margin-top:15px;font-size:13px;line-height:1.9;color:#dce1dd;overflow-wrap:anywhere}.log{height:230px;overflow:auto;background:#080909;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:ui-monospace,Consolas,monospace;font-size:12px;direction:ltr;text-align:left;line-height:1.8}.log div{border-bottom:1px solid #1b2021;padding:4px 0;overflow-wrap:anywhere}.ok{color:var(--accent)}.bad{color:var(--red)}.note{margin-top:22px;border-right:3px solid var(--accent);padding:12px 15px;background:#141914;border-radius:8px}.note p{margin:0;font-size:12px}footer{text-align:center;color:#5f686c;padding:30px;font-size:11px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}header{padding:18px 5%}main{margin:30px auto}.stats{grid-template-columns:repeat(3,1fr)}.card{padding:19px}}
+</style></head>
+<body>
+<header><div class="logo">TAHA <b>SECURITY LAB</b></div><div class="pill">LOCAL TRAINING DEMO · V1.0</div></header>
+<main>
+<div class="eyebrow">CYBERSECURITY / PASSWORD GUESSING</div>
+<h1>آزمایشگاه حدس رمز عبور</h1>
+<p>یک شبیه‌سازی آموزشی که همهٔ بررسی‌ها را داخل همین صفحه و روی دادهٔ ساختگی انجام می‌دهد. هیچ درخواستی به تلگرام یا سایت دیگری فرستاده نمی‌شود.</p>
+<div class="grid">
+<section class="card">
+<h2>01 / تنظیم آزمایش</h2>
+<label class="label" for="mode">نوع آزمایش</label>
+<select id="mode"><option value="open">بدون محدودیت تلاش (شبیه‌سازی آسیب‌پذیر)</option><option value="limited">با محدودیت ۵ تلاش</option></select>
+<p>هدف این دموی محلی، یک رمز ساختگی از پیش تعریف‌شده است؛ این صفحه فرم ورود واقعی ندارد.</p>
+<div class="row"><button id="run" onclick="runDemo()">اجرای آزمایش</button><button class="secondary" onclick="resetDemo()">بازنشانی</button></div>
+<div class="status" id="status" aria-live="polite">آمادهٔ اجرا. برای شروع روی «اجرای آزمایش» بزن.</div>
+<div class="stats"><div class="stat"><small>تلاش‌ها</small><strong id="tries">0</strong></div><div class="stat"><small>وضعیت</small><strong id="state">READY</strong></div><div class="stat"><small>زمان</small><strong id="elapsed">0 ms</strong></div></div>
+</section>
+<section class="card">
+<h2>02 / گزارش زنده</h2>
+<div class="log" id="log" aria-live="polite"><div>TAHA-LAB // local simulation initialized</div><div>NETWORK // no external requests</div></div>
+<div class="note"><p><b>محدودیت آزمایش:</b> این صفحه نمونهٔ آموزشی سمت مرورگر است، نه ابزار تست سایت واقعی. رمز و فهرست گزینه‌ها در کد نمونه قرار دارند؛ برای احراز هویت واقعی باید کنترل‌ها سمت سرور پیاده‌سازی شوند.</p></div>
+</section></div>
+</main><footer>TAHA SECURITY LAB © 2026 · EDUCATIONAL USE ONLY</footer>
+<script>
+// Everything stays in this page. No fetch(), XHR, form submission, or external target.
+const candidates = ['123456','password','qwerty','admin123','taha123','letmein','summer2026','A7-demo'];
+const demoSecret = 'A7-demo';
+let timer = null;
+function logLine(message, cls='') { const line=document.createElement('div'); if(cls) line.className=cls; line.textContent=message; document.getElementById('log').appendChild(line); document.getElementById('log').scrollTop=document.getElementById('log').scrollHeight; }
+function runDemo(){
+  if(timer) return;
+  resetCountersOnly();
+  const limited=document.getElementById('mode').value==='limited';
+  const runBtn=document.getElementById('run'); runBtn.disabled=true;
+  const start=performance.now(); let i=0;
+  document.getElementById('state').textContent='RUNNING';
+  document.getElementById('status').textContent='در حال اجرای شبیه‌سازی محلی…';
+  logLine('MODE // '+(limited?'rate limit: 5 attempts':'no rate limit (simulation)'));
+  timer=setInterval(()=>{
+    if(limited && i>=5){
+      clearInterval(timer);timer=null;runBtn.disabled=false;
+      document.getElementById('state').textContent='BLOCKED';
+      document.getElementById('elapsed').textContent=Math.round(performance.now()-start)+' ms';
+      document.getElementById('status').textContent='شبیه‌سازی متوقف شد: پس از ۵ تلاش، محدودیت فعال شد و رمز آزمایشی پیدا نشد.';
+      logLine('RATE LIMIT // simulation stopped after 5 attempts','bad');return;
+    }
+    const guess=candidates[i]; if(guess===undefined){clearInterval(timer);timer=null;runBtn.disabled=false;return;}
+    i++; document.getElementById('tries').textContent=String(i);
+    if(guess===demoSecret){
+      clearInterval(timer);timer=null;runBtn.disabled=false;
+      const elapsed=Math.round(performance.now()-start);document.getElementById('elapsed').textContent=elapsed+' ms';
+      document.getElementById('state').textContent='MATCH';
+      document.getElementById('status').textContent='رمز ساختگی در شبیه‌سازی پیدا شد؛ تعداد تلاش‌ها: '+i+' . این نتیجه فقط مربوط به دادهٔ محلی نمونه است.';
+      logLine('MATCH // candidate #'+i+' matched the local demo value','ok');return;
+    }
+    logLine('TRY '+String(i).padStart(2,'0')+' // '+guess+' // no match','bad');
+    document.getElementById('elapsed').textContent=Math.round(performance.now()-start)+' ms';
+  },220);
+}
+function resetCountersOnly(){if(timer){clearInterval(timer);timer=null;}document.getElementById('tries').textContent='0';document.getElementById('state').textContent='READY';document.getElementById('elapsed').textContent='0 ms';document.getElementById('run').disabled=false;}
+function resetDemo(){resetCountersOnly();document.getElementById('status').textContent='آمادهٔ اجرا. برای شروع روی «اجرای آزمایش» بزن.';document.getElementById('log').innerHTML='<div>TAHA-LAB // local simulation reset</div><div>NETWORK // no external requests</div>';}
+</script></body></html>
